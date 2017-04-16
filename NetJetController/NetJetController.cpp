@@ -53,7 +53,7 @@ void NetJetEmulator::SetState(int *a, bool down, int mapping, bool override=fals
 			*a |= mapping;
 		} else {
 			// set our mapping, ignoring previous value (i.e. don't go faster when both arrow keys and DPad is pressed etc.)
-			// don't use this on Gamepad_wButtons, it will have the effect of clearing all other Gamepad_wButtons
+			// don't use this on Gamepad_wButtons, it will have the effect of clearing all other buttons
 			*a  = mapping;
 		}
 	}
