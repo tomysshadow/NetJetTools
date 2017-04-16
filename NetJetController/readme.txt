@@ -30,21 +30,21 @@ Maps:
 	Right Arrow Key     - Right Thumbstick Right
 
 	360 Controller Map:
-	A                                 - Button 1
-	B                                 - Button 2
-	X                                 - Button 3
-	Y                                 - Button 4
-	Left Button, Left Trigger         - Left Shoulder
-	Right Button, Right Trigger       - Right Shoulder
-	Start                             - Start
-	DPad Up   , Left Thumbstick Up    - DPad Up
-	DPad Down , Left Thumbstick Down  - DPad Down
-	DPad Left , Left Thumbstick Left  - DPad Left
-	DPad Right, Left Thumbstick Right - DPad Right
-	Right Thumbstick Up               - Right Thumbstick Up
-	Right Thumbstick Down             - Right Thumbstick Down
-	Right Thumbstick Left             - Right Thumbstick Left
-	Right Thumbstick Right            - Right Thumbstick Right
+	A                                   - Button 1
+	B                                   - Button 2
+	X                                   - Button 3
+	Y                                   - Button 4
+	Left Button , Left Trigger          - Left Shoulder
+	Right Button, Right Trigger         - Right Shoulder
+	Start                               - Start
+	DPad Up     , Left Thumbstick Up    - DPad Up
+	DPad Down   , Left Thumbstick Down  - DPad Down
+	DPad Left   , Left Thumbstick Left  - DPad Left
+	DPad Right  , Left Thumbstick Right - DPad Right
+	Right Thumbstick Up                 - Right Thumbstick Up
+	Right Thumbstick Down               - Right Thumbstick Down
+	Right Thumbstick Left               - Right Thumbstick Left
+	Right Thumbstick Right              - Right Thumbstick Right
 --------
 Device Details:
 	Friendly Name:
@@ -67,10 +67,10 @@ Device Details:
 		byte Gamepad_bThumbRY
 		Right Analog Stick Up to Down
 
-		byte[20] ControllerKey
+		byte ControllerKey[20]
 		Controller Key
 
-		byte[20] CartridgeKey
+		byte CartridgeKey[20]
 		Cartridge Key
 
 	Messages:
