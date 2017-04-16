@@ -144,12 +144,9 @@ void NetJetEmulator::callNetJetControllerGetState(int *Gamepad_wButtons, int *Ga
 				SetState(Gamepad_wButtons, the360ControllerState.Gamepad.wButtons      & 0x0002, 0x00000400);
 				SetState(Gamepad_wButtons, the360ControllerState.Gamepad.wButtons      & 0x0004, 0x00000800);
 				SetState(Gamepad_wButtons, the360ControllerState.Gamepad.wButtons      & 0x0008, 0x00001000);
-				if (the360ControllerState.Gamepad.sThumbRX < -8689 || the360ControllerState.Gamepad.sThumbRX > 8689) {
-					*Gamepad_bThumbRX = (the360ControllerState.Gamepad.sThumbRX / 65536.0 + 0.5) * 64.0;
-				}
-				if (the360ControllerState.Gamepad.sThumbRY < -8689 || the360ControllerState.Gamepad.sThumbRY > 8689) {
-					*Gamepad_bThumbRY = (-the360ControllerState.Gamepad.sThumbRY / 65536.0 + 0.5) * 64.0;
-				}
+
+				SetState(Gamepad_bThumbRX, the360ControllerState.Gamepad.sThumbRX < -8689 || the360ControllerState.Gamepad.sThumbRX > 8689, ( the360ControllerState.Gamepad.sThumbRX / 65536.0 + 0.5) * 64.0, true);
+				SetState(Gamepad_bThumbRY, the360ControllerState.Gamepad.sThumbRY < -8689 || the360ControllerState.Gamepad.sThumbRY > 8689, (-the360ControllerState.Gamepad.sThumbRY / 65536.0 + 0.5) * 64.0, true);
 			}
 		}
 
