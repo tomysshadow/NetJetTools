@@ -59,15 +59,15 @@ void NetJetEmulator::SetState(int *a, bool down, int mapping, bool override=fals
 	}
 }
 
-void NetJetEmulator::SetControllerInserted(int *Gamepad_wButtons, int *Gamepad_bThumbRX, int *Gamepad_bThumbRY, bool result = true, bool override = false, bool overridejoysticks = false) {
+void NetJetEmulator::SetControllerInserted(int *Gamepad_wButtons, int *Gamepad_bThumbRX, int *Gamepad_bThumbRY, bool result = true, bool override = false, bool downjoysticks = false) {
 	bool down = (!result || (*Gamepad_wButtons & 0x00010000) != 0x00010000);
 	// override previous value
 	// considering the controller is apparently not inserted and it could have been anything
 	SetState(Gamepad_wButtons, down, 0x00010000, override);
 	// centre the joysticks
 	// considering the controller was apparently not inserted
-	SetState(Gamepad_bThumbRX, down, 0x0000001F, overridejoysticks);
-	SetState(Gamepad_bThumbRY, down, 0x0000001F, overridejoysticks);
+	SetState(Gamepad_bThumbRX, downjoysticks, 0x0000001F, true);
+	SetState(Gamepad_bThumbRY, downjoysticks, 0x0000001F, true);
 }
 
 void NetJetEmulator::SetCartridgeInserted(int *Gamepad_wButtons, bool override = false) {
