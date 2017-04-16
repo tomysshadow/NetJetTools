@@ -47,5 +47,5 @@ private:
 	void SetState(int *, bool, int, bool);
 	void SetControllerInserted(int *, int *, int *, bool, bool, bool);
 	void SetCartridgeInserted(int *, bool);
-	void FixJoysticks(int *, int *);
+	void FixThumbstick(int *, int *);
 };

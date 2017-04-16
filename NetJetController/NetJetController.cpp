@@ -59,15 +59,15 @@ void NetJetEmulator::SetState(int *a, bool down, int mapping, bool override=fals
 	}
 }
 
-void NetJetEmulator::SetControllerInserted(int *Gamepad_wButtons, int *Gamepad_bThumbRX, int *Gamepad_bThumbRY, bool result = true, bool override = false, bool downjoysticks = false) {
+void NetJetEmulator::SetControllerInserted(int *Gamepad_wButtons, int *Gamepad_bThumbRX, int *Gamepad_bThumbRY, bool result = true, bool override = false, bool downthumbstick = false) {
 	bool down = (!result || (*Gamepad_wButtons & 0x00010000) != 0x00010000);
 	// override previous value
 	// considering the controller is apparently not inserted and it could have been anything
 	SetState(Gamepad_wButtons, down, 0x00010000, override);
-	// centre the joysticks
+	// centre the thumbstick
 	// considering the controller was apparently not inserted
-	SetState(Gamepad_bThumbRX, downjoysticks, 0x0000001F, true);
-	SetState(Gamepad_bThumbRY, downjoysticks, 0x0000001F, true);
+	SetState(Gamepad_bThumbRX, downthumbstick, 0x0000001F, true);
+	SetState(Gamepad_bThumbRY, downthumbstick, 0x0000001F, true);
 }
 
 void NetJetEmulator::SetCartridgeInserted(int *Gamepad_wButtons, bool override = false) {
@@ -75,7 +75,7 @@ void NetJetEmulator::SetCartridgeInserted(int *Gamepad_wButtons, bool override =
 	SetState(Gamepad_wButtons, down, 0x00100080, override);
 }
 
-void NetJetEmulator::FixJoysticks(int *Gamepad_bThumbRX, int *Gamepad_bThumbRY) {
+void NetJetEmulator::FixThumbstick(int *Gamepad_bThumbRX, int *Gamepad_bThumbRY) {
 	if (*Gamepad_bThumbRX < 0) {
 		*Gamepad_bThumbRX = 0;
 	}
@@ -95,9 +95,6 @@ void NetJetEmulator::callNetJetControllerGetState(int *Gamepad_wButtons, int *Ga
 	//POINT curpos;
 	//int myWidth = GetSystemMetrics(SM_CXSCREEN);
 	//int myHeight = GetSystemMetrics(SM_CYSCREEN);
-	XInputGetState_ originalXInputGetState;
-	XINPUT_STATE the360ControllerState;
-	DWORD theXbox360ControllerInserted;
 
 	/*
 	if (f.is_open()) {
@@ -114,6 +111,9 @@ void NetJetEmulator::callNetJetControllerGetState(int *Gamepad_wButtons, int *Ga
 		// ignore 360 Controller if user doesn't have XInput
 		if (!original360Controller) {
 		} else {
+			XInputGetState_ originalXInputGetState;
+			XINPUT_STATE the360ControllerState;
+			DWORD theXbox360ControllerInserted;
 			// get the 360 Controller state
 			memset(&the360ControllerState, 0x00, sizeof(XINPUT_STATE));
 			originalXInputGetState = (XInputGetState_)GetProcAddress(original360Controller, "XInputGetState");
@@ -207,8 +207,8 @@ void NetJetEmulator::callNetJetControllerGetState(int *Gamepad_wButtons, int *Ga
 		*/
 	}
 
-	// ensure joysticks are not further up/down/left/right than they can be on the controller
-	FixJoysticks(Gamepad_bThumbRX, Gamepad_bThumbRY);
+	// ensure thumbsticks are not further up/down/left/right than they can be on the controller
+	FixThumbstick(Gamepad_bThumbRX, Gamepad_bThumbRY);
 	// ensure the game thinks a controller is inserted and a cartridge is inserted and valid one more time just in case
 	SetControllerInserted(Gamepad_wButtons, Gamepad_bThumbRX, Gamepad_bThumbRY, true, false, false);
 	SetCartridgeInserted(Gamepad_wButtons);
