@@ -214,7 +214,7 @@ void NetJetEmulator::callNetJetControllerGetState(int *Gamepad_wButtons, int *Ga
 	SetCartridgeInserted(Gamepad_wButtons);
 }
 
-void NetJetEmulator::callNetJetControllerGetKey(char *Gamepad_wButtons, bool result) {
+void NetJetEmulator::callNetJetControllerGetKey(char *key, bool result) {
 	// call intercepted
 
 	/*
@@ -226,7 +226,7 @@ void NetJetEmulator::callNetJetControllerGetKey(char *Gamepad_wButtons, bool res
 	// zero key, this is not a keygen
 	// replicating real keys is outside the scope of this project
 	if (!result) {
-		memset(Gamepad_wButtons, 0x00, 0x20);
+		memset(key, 0x00, 0x20);
 	}
 }
 
