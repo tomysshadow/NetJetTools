@@ -67,10 +67,10 @@ inline void NetJetEmulator::centerThumbstick(PDWORD bThumbRX, PDWORD bThumbRY, b
 	}
 }
 
-inline void NetJetEmulator::setState(PDWORD a, bool down, DWORD mapping, bool override = false) {
+inline void NetJetEmulator::setState(PDWORD a, bool down, DWORD mapping, bool replace = false) {
 	// if the key/button is down
 	if (a && down) {
-		if (!override) {
+		if (!replace) {
 			// set our mapping
 			*a |= mapping;
 		} else {
@@ -81,19 +81,19 @@ inline void NetJetEmulator::setState(PDWORD a, bool down, DWORD mapping, bool ov
 	}
 }
 
-inline void NetJetEmulator::setControllerInserted(PDWORD wButtons, PDWORD bThumbRX, PDWORD bThumbRY, BOOL result = TRUE, bool override = false, bool thumbstickDown = false) {
+inline void NetJetEmulator::setControllerInserted(PDWORD wButtons, PDWORD bThumbRX, PDWORD bThumbRY, BOOL result = TRUE, bool replace = false, bool thumbstickDown = false) {
 	if (wButtons) {
 		bool down = (!result || (*wButtons & 0x00010000) != 0x00010000);
-		// override previous value
+		// replace previous value
 		// considering the controller is apparently not inserted and it could have been anything
-		setState(wButtons, down, 0x00010000, override);
+		setState(wButtons, down, 0x00010000, replace);
 	}
 	centerThumbstick(bThumbRX, bThumbRY, thumbstickDown);
 }
 
-inline void NetJetEmulator::setCartridgeInserted(PDWORD wButtons, bool override = false) {
+inline void NetJetEmulator::setCartridgeInserted(PDWORD wButtons, bool replace = false) {
 	bool down = (*wButtons & 0x00100080) != 0x00100080;
-	setState(wButtons, down, 0x00100080, override);
+	setState(wButtons, down, 0x00100080, replace);
 }
 
 void NetJetEmulator::callNetJetControllerGetState(PDWORD wButtons, PDWORD bThumbRX, PDWORD bThumbRY, BOOL result) {
