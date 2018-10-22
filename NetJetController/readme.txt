@@ -1,8 +1,8 @@
-3D Groove NetJet Emulator
-Programmed by TOMYSSHADOW
+3D Groove NetJet Emulator 1.1.0
+By Anthony Kleine
 --------
 Long Description:
-	An emulator for the Hasbro NetJet Controller device/QiGO/USBKEY meant specifically for use with Transformers Battle Universe. Allows the use of your keyboard/360 Controller in place of the NetJet Controller. If a legitimate NetJet Controller is connected, it will still use that controller. If a 360 Controller is connected, it will still use the NetJet Controller, but prefer input from the 360 Controller. Keyboard input will be preferred over either controller. Button presses are not cumulative (pressing left on both the NetJet Controller and keyboard will not make you run twice as fast in-game.) A game key is still required, this is not a keygen. While one could theoretically remove the Armadillo 4.66 DRM used by NetJet games and they would work without any legitimate NetJet Controller, that is outside the scope of this project.
+	An emulator for the Hasbro NetJet Controller device meant specifically for use with Transformers Battle Universe. Allows the use of your keyboard/360 Controller in place of the NetJet Controller. If a legitimate NetJet Controller is connected, it will still use that controller. If a 360 Controller is connected, it will still use the NetJet Controller, but prefer input from the 360 Controller. Keyboard input will be preferred over either controller. Button presses are not cumulative (pressing left on both the NetJet Controller and keyboard will not make you run twice as fast in-game.) A game key is still required, this is not a keygen. While one could theoretically remove the Armadillo 4.66 DRM used by NetJet games and they would work without any legitimate NetJet Controller, that is outside the scope of this project.
 
 	This is a proxy DLL to reside in the game directory. It relies on the original NetJetController.DLL being present but renamed to NetJetController_.DLL. SetWindowsHookEx is used to prevent the game from receiving keystrokes. This is to prevent key/button presses being received twice.
 

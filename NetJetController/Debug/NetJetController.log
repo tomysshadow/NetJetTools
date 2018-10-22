@@ -1,0 +1,4 @@
+﻿  NetJetController.cpp
+c:\users\anthony\documents\visual studio 2015\projects\netjetradio\netjetcontroller\netjetcontroller.cpp(146): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
+c:\users\anthony\documents\visual studio 2015\projects\netjetradio\netjetcontroller\netjetcontroller.cpp(147): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
+  NetJetController.vcxproj -> C:\Users\Anthony\Documents\Visual Studio 2015\Projects\NetJetRadio\Debug\NetJetController.dll
