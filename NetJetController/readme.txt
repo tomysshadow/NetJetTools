@@ -61,16 +61,16 @@ Device Details
 		Cartridge_Inserted Controller_Inserted "Right Shoulder" "Left Shoulder" "Button One" "Button Three" "Button Two" "Button Four"
 		Mouse_Map??        Unknown             Unknown          "DPad Right"    "DPad Left"  "DPad Down"    "DPad Up"    "Start"
 
-		byte bThumbRX
+		BYTE bThumbRX
 		Right Analog Stick Left to Right
 
-		byte bThumbRY
+		BYTE bThumbRY
 		Right Analog Stick Up to Down
 
-		byte controllerKey[20]
+		BYTE controllerKey[20]
 		Controller Key
 
-		byte cartridgeKey[20]
+		BYTE cartridgeKey[20]
 		Cartridge Key
 
 	Messages:
