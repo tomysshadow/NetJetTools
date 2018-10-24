@@ -6,11 +6,11 @@ Long Description:
 
 	This is a proxy DLL to reside in the game directory. It relies on the original NetJetController.DLL being present but renamed to NetJetController_.DLL. SetWindowsHookEx is used to prevent the game from receiving keystrokes. This is to prevent key/button presses being received twice.
 
-	In the future this code may be recycled into a fully fledged usermode application to pair with a NetJet Emulator driver that would give a universal emulation. The driver could reasonably be based off of FileDisk, as it would be required to mount an ISO image or similar. This would require returning a buffer in the NetJet Controller's device language from DeviceIoControl. The NetJet Controller exposes a CDROM interface. It mounts an image containing an AutoRun.exe and autorun.inf file which downloads an installer for the keyhole application for NetJet games via the internet. The Hasbro server for this is no longer available, and an error is given if attempting to connect to it. It does not expose any HID (Human Interface Device) interface. Instead, DeviceIoControl is used to Get Controller State as ReadFile/WriteFile would imply reading from/writing to the disk. Games identify the NetJet Controller by its Vendor ID (VID) and Product ID (PID.)
+	In the future this code may be recycled into a fully fledged application to pair with a NetJet Emulator driver that would give a universal emulation. The driver could reasonably be based off of FileDisk, as it would be required to mount an ISO image or similar. This would require returning a buffer in the NetJet Controller's device language from DeviceIoControl. The NetJet Controller exposes a CDROM interface. It mounts an image containing an AutoRun.exe and autorun.inf file which downloads an installer for the keyhole application for NetJet games via the internet. The Hasbro server for this is no longer available, and an error is given if attempting to connect to it. It does not expose any HID (Human Interface Device) interface. Instead, DeviceIoControl is used to Get Controller State as ReadFile/WriteFile would imply reading from/writing to the disk. Games identify the NetJet Controller by its Vendor ID (VID) and Product ID (PID.)
 --------
 Maps:
 	Controller Inserted: Always
-	Cartridge Inserted: Always, if legitimate NetJet Controller does not have a key in, a dummy key is returned
+	Cartridge Inserted: Always (if legitimate NetJet Controller does not have a key in, a null key is returned)
 
 	Keyboard Map:
 	1, Enter, Space     - Button 1
@@ -57,20 +57,20 @@ Device Details:
 	4D014h - Get Controller State
 
 	OutBuffer:
-		DWORD Gamepad_wButtons
+		DWORD wButtons
 		Cartridge_Inserted Controller_Inserted "Right Shoulder" "Left Shoulder" "Button One" "Button Three" "Button Two" "Button Four"
 		Mouse_Map??        Unknown             Unknown          "DPad Right"    "DPad Left"  "DPad Down"    "DPad Up"    "Start"
 
-		byte Gamepad_bThumbRX
+		byte bThumbRX
 		Right Analog Stick Left to Right
 
-		byte Gamepad_bThumbRY
+		byte bThumbRY
 		Right Analog Stick Up to Down
 
-		byte ControllerKey[20]
+		byte controllerKey[20]
 		Controller Key
 
-		byte CartridgeKey[20]
+		byte cartridgeKey[20]
 		Cartridge Key
 
 	Messages:
