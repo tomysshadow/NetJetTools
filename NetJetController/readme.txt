@@ -1,14 +1,14 @@
 3D Groove NetJet Emulator 1.1.0
 By Anthony Kleine
 --------
-Long Description:
+Long Description
 	An emulator for the Hasbro NetJet Controller device meant specifically for use with Transformers Battle Universe. Allows the use of your keyboard/360 Controller in place of the NetJet Controller. If a legitimate NetJet Controller is connected, it will still use that controller. If a 360 Controller is connected, it will still use the NetJet Controller, but prefer input from the 360 Controller. Keyboard input will be preferred over either controller. Button presses are not cumulative (pressing left on both the NetJet Controller and keyboard will not make you run twice as fast in-game.) A game key is still required, this is not a keygen. While one could theoretically remove the Armadillo 4.66 DRM used by NetJet games and they would work without any legitimate NetJet Controller, that is outside the scope of this project.
 
 	This is a proxy DLL to reside in the game directory. It relies on the original NetJetController.DLL being present but renamed to NetJetController_.DLL. SetWindowsHookEx is used to prevent the game from receiving keystrokes. This is to prevent key/button presses being received twice.
 
 	In the future this code may be recycled into a fully fledged application to pair with a NetJet Emulator driver that would give a universal emulation. The driver could reasonably be based off of FileDisk, as it would be required to mount an ISO image or similar. This would require returning a buffer in the NetJet Controller's device language from DeviceIoControl. The NetJet Controller exposes a CDROM interface. It mounts an image containing an AutoRun.exe and autorun.inf file which downloads an installer for the keyhole application for NetJet games via the internet. The Hasbro server for this is no longer available, and an error is given if attempting to connect to it. It does not expose any HID (Human Interface Device) interface. Instead, DeviceIoControl is used to Get Controller State as ReadFile/WriteFile would imply reading from/writing to the disk. Games identify the NetJet Controller by its Vendor ID (VID) and Product ID (PID.)
 --------
-Maps:
+Maps
 	Controller Inserted: Always
 	Cartridge Inserted: Always (if legitimate NetJet Controller does not have a key in, a null key is returned)
 
@@ -46,7 +46,7 @@ Maps:
 	Right Thumbstick Left               - Right Thumbstick Left
 	Right Thumbstick Right              - Right Thumbstick Right
 --------
-Device Details:
+Device Details
 	Friendly Name:
 	Net Jet Controller USB Device
 
