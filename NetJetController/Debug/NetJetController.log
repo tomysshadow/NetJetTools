@@ -1,5 +1,6 @@
 ﻿  NetJetController.cpp
-c:\users\anthony\documents\visual studio 2015\projects\netjetradio\netjetcontroller\netjetcontroller.cpp(146): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
-c:\users\anthony\documents\visual studio 2015\projects\netjetradio\netjetcontroller\netjetcontroller.cpp(147): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
-     Creating library C:\Users\Anthony\Documents\Visual Studio 2015\Projects\NetJetRadio\Debug\NetJetController.lib and object C:\Users\Anthony\Documents\Visual Studio 2015\Projects\NetJetRadio\Debug\NetJetController.exp
-  NetJetController.vcxproj -> C:\Users\Anthony\Documents\Visual Studio 2015\Projects\NetJetRadio\Debug\NetJetController.dll
+c:\users\anthony\documents\visual studio 2015\projects\netjettools\netjetcontroller\netjetcontroller.cpp(146): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
+c:\users\anthony\documents\visual studio 2015\projects\netjettools\netjetcontroller\netjetcontroller.cpp(147): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
+  LINK : C:\Users\Anthony\Documents\Visual Studio 2015\Projects\NetJetTools\Debug\NetJetController.dll not found or not built by the last incremental link; performing full link
+     Creating library C:\Users\Anthony\Documents\Visual Studio 2015\Projects\NetJetTools\Debug\NetJetController.lib and object C:\Users\Anthony\Documents\Visual Studio 2015\Projects\NetJetTools\Debug\NetJetController.exp
+  NetJetController.vcxproj -> C:\Users\Anthony\Documents\Visual Studio 2015\Projects\NetJetTools\Debug\NetJetController.dll

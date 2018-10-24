@@ -1,10 +1,10 @@
 ﻿  NetJetController.cpp
 NetJetController.cpp(146): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
 NetJetController.cpp(147): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
-     Creating library C:\Users\Anthony\Documents\Visual Studio 2015\Projects\NetJetRadio\Release\NetJetController.lib and object C:\Users\Anthony\Documents\Visual Studio 2015\Projects\NetJetRadio\Release\NetJetController.exp
+     Creating library C:\Users\Anthony\Documents\Visual Studio 2015\Projects\NetJetTools\Release\NetJetController.lib and object C:\Users\Anthony\Documents\Visual Studio 2015\Projects\NetJetTools\Release\NetJetController.exp
   Generating code
-  3 of 29 functions (10.3%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    2 functions had inline decision re-evaluated but remain unchanged
+  29 of 29 functions (100.0%) were compiled, the rest were copied from previous compilation.
+    2 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
-  NetJetController.vcxproj -> C:\Users\Anthony\Documents\Visual Studio 2015\Projects\NetJetRadio\Release\NetJetController.dll
+  NetJetController.vcxproj -> C:\Users\Anthony\Documents\Visual Studio 2015\Projects\NetJetTools\Release\NetJetController.dll
