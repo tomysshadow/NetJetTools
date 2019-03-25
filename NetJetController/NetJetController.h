@@ -8,13 +8,30 @@
 
 
 
+typedef struct _XINPUT_GAMEPAD {
+	WORD  wButtons;
+	BYTE  bLeftTrigger;
+	BYTE  bRightTrigger;
+	SHORT sThumbLX;
+	SHORT sThumbLY;
+	SHORT sThumbRX;
+	SHORT sThumbRY;
+} XINPUT_GAMEPAD, *PXINPUT_GAMEPAD;
+
+typedef struct _XINPUT_STATE {
+	DWORD dwPacketNumber;
+	XINPUT_GAMEPAD Gamepad;
+} XINPUT_STATE, *PXINPUT_STATE;
+
+typedef DWORD(*_XInputGetState)(_In_ DWORD dwUserIndex, _Out_ XINPUT_STATE *pState);
+
 class NetJetEmulator {
 	public:
 	bool keyMapping = false;
 	bool mouseMapping = false;
 	bool suspended = false;
 	void callNetJetControllerGetState(PDWORD, PDWORD, PDWORD, BOOL);
-	void callNetJetControllerGetKey(PVOID, BOOL);
+	void callNetJetControllerGetKey(PVOID);
 	class Keyboard {
 		private:
 		KBDLLHOOKSTRUCT keyboardDLLHookStruct;

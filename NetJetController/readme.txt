@@ -1,4 +1,4 @@
-3D Groove NetJet Emulator 1.1.0
+3D Groove NetJet Emulator 1.1.1
 By Anthony Kleine
 --------
 Long Description

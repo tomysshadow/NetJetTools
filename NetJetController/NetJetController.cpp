@@ -1,7 +1,5 @@
 #include "NetJetController.h"
-
 #include <windows.h>
-#include "myXInput.h"
 
 HINSTANCE originalNetJetController;
 HINSTANCE original360Controller;
@@ -41,14 +39,17 @@ inline void NetJetEmulator::fixThumbstick(PDWORD bThumbRX, PDWORD bThumbRY) {
 		if (*bThumbRX < 0) {
 			*bThumbRX = 0;
 		}
+
 		if (*bThumbRX > 64) {
 			*bThumbRX = 64;
 		}
 	}
+
 	if (bThumbRY) {
 		if (*bThumbRY < 0) {
 			*bThumbRY = 0;
 		}
+
 		if (*bThumbRY > 64) {
 			*bThumbRY = 64;
 		}
@@ -59,9 +60,11 @@ inline void NetJetEmulator::centerThumbstick(PDWORD bThumbRX, PDWORD bThumbRY, b
 	// centre the thumbstick
 	// considering the controller was apparently not inserted
 	const DWORD THUMBSTICK_CENTER = 0x0000001F;
+
 	if (bThumbRX) {
 		setState(bThumbRX, thumbstickDown, THUMBSTICK_CENTER, true);
 	}
+
 	if (bThumbRY) {
 		setState(bThumbRY, thumbstickDown, THUMBSTICK_CENTER, true);
 	}
@@ -81,47 +84,54 @@ inline void NetJetEmulator::setState(PDWORD a, bool down, DWORD mapping, bool re
 	}
 }
 
-inline void NetJetEmulator::setControllerInserted(PDWORD wButtons, PDWORD bThumbRX, PDWORD bThumbRY, BOOL result = TRUE, bool replace = false, bool thumbstickDown = false) {
+inline void NetJetEmulator::setControllerInserted(PDWORD wButtons, PDWORD bThumbRX, PDWORD bThumbRY, BOOL originalResult = TRUE, bool replace = false, bool thumbstickDown = false) {
 	if (wButtons) {
-		bool down = (!result || (*wButtons & 0x00010000) != 0x00010000);
+		bool down = (originalResult || (*wButtons & 0x00010000) != 0x00010000);
 		// replace previous value
 		// considering the controller is apparently not inserted and it could have been anything
 		setState(wButtons, down, 0x00010000, replace);
 	}
+
 	centerThumbstick(bThumbRX, bThumbRY, thumbstickDown);
 }
 
 inline void NetJetEmulator::setCartridgeInserted(PDWORD wButtons, bool replace = false) {
-	bool down = (*wButtons & 0x00100080) != 0x00100080;
-	setState(wButtons, down, 0x00100080, replace);
+	if (wButtons) {
+		bool down = (*wButtons & 0x00100080) != 0x00100080;
+		setState(wButtons, down, 0x00100080, replace);
+	}
 }
 
-void NetJetEmulator::callNetJetControllerGetState(PDWORD wButtons, PDWORD bThumbRX, PDWORD bThumbRY, BOOL result) {
+void NetJetEmulator::callNetJetControllerGetState(PDWORD wButtons, PDWORD bThumbRX, PDWORD bThumbRY, BOOL originalResult) {
 	// call intercepted
 	//POINT curpos;
 	//int myWidth = GetSystemMetrics(SM_CXSCREEN);
 	//int myHeight = GetSystemMetrics(SM_CYSCREEN);
 
 	// ensure the game thinks a controller is inserted
-	setControllerInserted(wButtons, bThumbRX, bThumbRY, result, true, true);
+	setControllerInserted(wButtons, bThumbRX, bThumbRY, originalResult, true, true);
 	// ensure the game thinks a cartridge is inserted and valid
 	setCartridgeInserted(wButtons);
+
 	// if the controller isn't suspended...
 	if (!suspended) {
 		// ignore 360 Controller if user doesn't have XInput
 		if (original360Controller) {
-			XInputGetState_ originalXInputGetState;
+			_XInputGetState originalXInputGetState;
 			XINPUT_STATE the360ControllerState;
 			DWORD theXbox360ControllerInserted;
+
 			// get the 360 Controller state
 			ZeroMemory(&the360ControllerState, sizeof(XINPUT_STATE));
-			originalXInputGetState = (XInputGetState_)GetProcAddress(original360Controller, "XInputGetState");
+			originalXInputGetState = (_XInputGetState)GetProcAddress(original360Controller, "XInputGetState");
+
 			if (!originalXInputGetState) {
 				// do this here to avoid out of date values
 				theXbox360ControllerInserted = 1167L;
 			} else {
 				theXbox360ControllerInserted = originalXInputGetState(0, &the360ControllerState);
 			}
+
 			// if the 360 Controller is inserted
 			if (theXbox360ControllerInserted == 0L) {
 				// set currently pressed wButtons as down on NetJet Controller
@@ -208,16 +218,15 @@ void NetJetEmulator::callNetJetControllerGetState(PDWORD wButtons, PDWORD bThumb
 	// ensure thumbsticks are not further up/down/left/right than they can be on the controller
 	fixThumbstick(bThumbRX, bThumbRY);
 	// ensure the game thinks a controller is inserted and a cartridge is inserted and valid one more time just in case
-	setControllerInserted(wButtons, bThumbRX, bThumbRY, true, false, false);
+	setControllerInserted(wButtons, bThumbRX, bThumbRY);
 	setCartridgeInserted(wButtons);
 }
 
-void NetJetEmulator::callNetJetControllerGetKey(PVOID key, BOOL result) {
+void NetJetEmulator::callNetJetControllerGetKey(PVOID key) {
 	// call intercepted
-
 	// zero key, this is not a keygen
 	// replicating real keys is outside the scope of this project
-	if (key && !result) {
+	if (key) {
 		ZeroMemory(key, 0x20);
 	}
 }
@@ -229,264 +238,217 @@ void NetJetEmulator::callNetJetControllerGetKey(PVOID key, BOOL result) {
 
 
 
-BOOL WINAPI DllMain(HINSTANCE hInst, DWORD fdwReason, LPVOID lpvReserved)
-{
+BOOL WINAPI DllMain(HINSTANCE hInst, DWORD fdwReason, LPVOID lpvReserved) {
 	switch (fdwReason) {
-	case DLL_PROCESS_ATTACH:
+		case DLL_PROCESS_ATTACH:
 		DisableThreadLibraryCalls(hInst);
-		originalNetJetController = LoadLibraryA("NetJetController_.DLL");
+		originalNetJetController = LoadLibraryA("NetJetController_orig.DLL");
+
 		if (!originalNetJetController) {
-			return false;
+			return FALSE;
 		}
 
 		netJetEmulatorKeyboard.backgroundThreadHook = SetWindowsHookEx(WH_KEYBOARD_LL, netJetEmulatorKeyboard.backgroundThread, NULL, 0);
 		ShowCursor(FALSE);
 		break;
-	case DLL_PROCESS_DETACH:
+		case DLL_PROCESS_DETACH:
 		FreeLibrary(originalNetJetController);
-
 		UnhookWindowsHookEx(netJetEmulatorKeyboard.backgroundThreadHook);
 		ShowCursor(TRUE);
 		break;
 	}
-	return true;
+	return TRUE;
 }
 
 // duplicate functions which call the original and return false
 // we always want these calls to appear successful
-// returning false means no error ocurred
-typedef DWORD(*NetJetControllerEnableKeyMapping_)();
-extern "C" DWORD callNetJetControllerEnableKeyMapping()
-{
-	NetJetControllerEnableKeyMapping_ originalNetJetControllerEnableKeyMapping;
-
-	originalNetJetControllerEnableKeyMapping = (NetJetControllerEnableKeyMapping_)GetProcAddress(originalNetJetController, "NetJetControllerEnableKeyMapping");
-	if (!originalNetJetControllerEnableKeyMapping) {
-	} else {
+// returning false or zero means no error occured
+typedef DWORD(*_NetJetControllerEnableKeyMapping)();
+extern "C" DWORD callNetJetControllerEnableKeyMapping() {
+	_NetJetControllerEnableKeyMapping originalNetJetControllerEnableKeyMapping;
+	originalNetJetControllerEnableKeyMapping = (_NetJetControllerEnableKeyMapping)GetProcAddress(originalNetJetController, "NetJetControllerEnableKeyMapping");
+	
+	if (originalNetJetControllerEnableKeyMapping) {
 		originalNetJetControllerEnableKeyMapping();
 	}
 
 	netJetEmulator.keyMapping = true;
 	UnhookWindowsHookEx(netJetEmulatorKeyboard.backgroundThreadHook);
-
 	return 0;
 }
 
-typedef DWORD(*NetJetControllerDisableKeyMapping_)();
-extern "C" DWORD callNetJetControllerDisableKeyMapping()
-{
-	NetJetControllerDisableKeyMapping_ originalNetJetControllerDisableKeyMapping;
-
-	originalNetJetControllerDisableKeyMapping = (NetJetControllerDisableKeyMapping_)GetProcAddress(originalNetJetController, "NetJetControllerDisableKeyMapping");
-	if (!originalNetJetControllerDisableKeyMapping) {
-	} else {
+typedef DWORD(*_NetJetControllerDisableKeyMapping)();
+extern "C" DWORD callNetJetControllerDisableKeyMapping() {
+	_NetJetControllerDisableKeyMapping originalNetJetControllerDisableKeyMapping;
+	originalNetJetControllerDisableKeyMapping = (_NetJetControllerDisableKeyMapping)GetProcAddress(originalNetJetController, "NetJetControllerDisableKeyMapping");
+	
+	if (originalNetJetControllerDisableKeyMapping) {
 		originalNetJetControllerDisableKeyMapping();
 	}
 
 	netJetEmulator.keyMapping = false;
 	netJetEmulatorKeyboard.backgroundThreadHook = SetWindowsHookEx(WH_KEYBOARD_LL, netJetEmulatorKeyboard.backgroundThread, NULL, 0);
-
 	return 0;
 }
 
-typedef DWORD(*NetJetControllerEnableMouseMapping_)();
-extern "C" DWORD callNetJetControllerEnableMouseMapping()
-{
-	NetJetControllerEnableMouseMapping_ originalNetJetControllerEnableMouseMapping;
-
-	originalNetJetControllerEnableMouseMapping = (NetJetControllerEnableMouseMapping_)GetProcAddress(originalNetJetController, "NetJetControllerEnableMouseMapping");
-	if (!originalNetJetControllerEnableMouseMapping) {
-	} else {
+typedef DWORD(*_NetJetControllerEnableMouseMapping)();
+extern "C" DWORD callNetJetControllerEnableMouseMapping() {
+	_NetJetControllerEnableMouseMapping originalNetJetControllerEnableMouseMapping;
+	originalNetJetControllerEnableMouseMapping = (_NetJetControllerEnableMouseMapping)GetProcAddress(originalNetJetController, "NetJetControllerEnableMouseMapping");
+	
+	if (originalNetJetControllerEnableMouseMapping) {
 		originalNetJetControllerEnableMouseMapping();
 	}
 
 	netJetEmulator.mouseMapping = true;
-	ShowCursor(true);
-
+	ShowCursor(TRUE);
 	return 0;
 }
 
-typedef DWORD(*NetJetControllerDisableMouseMapping_)();
-extern "C" DWORD callNetJetControllerDisableMouseMapping()
-{
-	NetJetControllerDisableMouseMapping_ originalNetJetControllerDisableMouseMapping;
-
-	originalNetJetControllerDisableMouseMapping = (NetJetControllerDisableMouseMapping_)GetProcAddress(originalNetJetController, "NetJetControllerDisableMouseMapping");
-	if (!originalNetJetControllerDisableMouseMapping) {
-	} else {
+typedef DWORD(*_NetJetControllerDisableMouseMapping)();
+extern "C" DWORD callNetJetControllerDisableMouseMapping() {
+	_NetJetControllerDisableMouseMapping originalNetJetControllerDisableMouseMapping;
+	originalNetJetControllerDisableMouseMapping = (_NetJetControllerDisableMouseMapping)GetProcAddress(originalNetJetController, "NetJetControllerDisableMouseMapping");
+	
+	if (originalNetJetControllerDisableMouseMapping) {
 		originalNetJetControllerDisableMouseMapping();
 	}
 
 	netJetEmulator.mouseMapping = false;
-	ShowCursor(false);
-
+	ShowCursor(FALSE);
 	return 0;
 }
 
-typedef DWORD(*NetJetControllerInitialize_)();
-extern "C" DWORD callNetJetControllerInitialize()
-{
-	NetJetControllerInitialize_ originalNetJetControllerInitialize;
-
-	originalNetJetControllerInitialize = (NetJetControllerInitialize_)GetProcAddress(originalNetJetController, "NetJetControllerInitialize");
-	if (!originalNetJetControllerInitialize) {
-	} else {
+typedef DWORD(*_NetJetControllerInitialize)();
+extern "C" DWORD callNetJetControllerInitialize() {
+	_NetJetControllerInitialize originalNetJetControllerInitialize;
+	originalNetJetControllerInitialize = (_NetJetControllerInitialize)GetProcAddress(originalNetJetController, "NetJetControllerInitialize");
+	
+	if (originalNetJetControllerInitialize) {
 		originalNetJetControllerInitialize();
 	}
 
 	original360Controller = LoadLibrary(L"XINPUT9_1_0.DLL");
-
 	return 0;
 }
 
-typedef BOOL(*NetJetControllerSuspend_)();
-extern "C" BOOL callNetJetControllerSuspend()
-{
-	NetJetControllerSuspend_ originalNetJetControllerSuspend;
+typedef BOOL(*_NetJetControllerSuspend)();
+extern "C" BOOL callNetJetControllerSuspend() {
+	_NetJetControllerSuspend originalNetJetControllerSuspend;
+	originalNetJetControllerSuspend = (_NetJetControllerSuspend)GetProcAddress(originalNetJetController, "NetJetControllerSuspend");
 
-	originalNetJetControllerSuspend = (NetJetControllerSuspend_)GetProcAddress(originalNetJetController, "NetJetControllerSuspend");
-	if (!originalNetJetControllerSuspend) {
-	} else {
+	if (originalNetJetControllerSuspend) {
 		originalNetJetControllerSuspend();
 	}
-	netJetEmulator.suspended = true;
 
-	return false;
+	netJetEmulator.suspended = true;
+	return FALSE;
 }
 
-typedef BOOL(*NetJetControllerResume_)();
-extern "C" BOOL callNetJetControllerResume()
-{
-	NetJetControllerResume_ originalNetJetControllerResume;
+typedef BOOL(*_NetJetControllerResume)();
+extern "C" BOOL callNetJetControllerResume() {
+	_NetJetControllerResume originalNetJetControllerResume;
+	originalNetJetControllerResume = (_NetJetControllerResume)GetProcAddress(originalNetJetController, "NetJetControllerResume");
 
-	originalNetJetControllerResume = (NetJetControllerSuspend_)GetProcAddress(originalNetJetController, "NetJetControllerResume");
-	if (!originalNetJetControllerResume) {
-	} else {
+	if (originalNetJetControllerResume) {
 		originalNetJetControllerResume();
 	}
-	netJetEmulator.suspended = false;
 
-	return false;
+	netJetEmulator.suspended = false;
+	return FALSE;
 }
 
-typedef DWORD(*NetJetControllerShutdown_)();
-extern "C" DWORD callNetJetControllerShutdown()
-{
-	NetJetControllerShutdown_ originalNetJetControllerShutdown;
+typedef DWORD(*_NetJetControllerShutdown)();
+extern "C" DWORD callNetJetControllerShutdown() {
+	_NetJetControllerShutdown originalNetJetControllerShutdown;
+	originalNetJetControllerShutdown = (_NetJetControllerShutdown)GetProcAddress(originalNetJetController, "NetJetControllerShutdown");
 
-	originalNetJetControllerShutdown = (NetJetControllerShutdown_)GetProcAddress(originalNetJetController, "NetJetControllerShutdown");
-	if (!originalNetJetControllerShutdown) {
-	} else {
+	if (originalNetJetControllerShutdown) {
 		originalNetJetControllerShutdown();
 	}
-
 	return 0;
 }
 
-typedef DWORD(*NetJetControllerSetKeyMapping_)(WORD);
-extern "C" DWORD callNetJetControllerSetKeyMapping(WORD wButtons)
-{
-	NetJetControllerSetKeyMapping_ originalNetJetControllerSetKeyMapping;
+typedef DWORD(*_NetJetControllerSetKeyMapping)(WORD);
+extern "C" DWORD callNetJetControllerSetKeyMapping(WORD wButtons) {
+	_NetJetControllerSetKeyMapping originalNetJetControllerSetKeyMapping;
+	originalNetJetControllerSetKeyMapping = (_NetJetControllerSetKeyMapping)GetProcAddress(originalNetJetController, "NetJetControllerSetKeyMapping");
 
-	originalNetJetControllerSetKeyMapping = (NetJetControllerSetKeyMapping_)GetProcAddress(originalNetJetController, "NetJetControllerSetKeyMapping");
-	if (!originalNetJetControllerSetKeyMapping) {
-	} else {
+	if (originalNetJetControllerSetKeyMapping) {
 		originalNetJetControllerSetKeyMapping(wButtons);
 	}
-
 	return 0;
 }
 
-typedef BOOL(__cdecl *NetJetControllerSetOption_)(WORD, WORD);
-extern "C" BOOL __cdecl callNetJetControllerSetOption(WORD wButtons, WORD nPriority)
-{
-	NetJetControllerSetOption_ originalNetJetControllerSetOption;
+typedef BOOL(__cdecl *_NetJetControllerSetOption)(WORD, WORD);
+extern "C" BOOL __cdecl callNetJetControllerSetOption(WORD wButtons, WORD nPriority) {
+	_NetJetControllerSetOption originalNetJetControllerSetOption;
+	originalNetJetControllerSetOption = (_NetJetControllerSetOption)GetProcAddress(originalNetJetController, "NetJetControllerSetOption");
 
-	originalNetJetControllerSetOption = (NetJetControllerSetOption_)GetProcAddress(originalNetJetController, "NetJetControllerSetOption");
-	if (!originalNetJetControllerSetOption) {
-	} else {
+	if (originalNetJetControllerSetOption) {
 		originalNetJetControllerSetOption(wButtons, nPriority);
 	}
-
-	return false;
+	return FALSE;
 }
 
-typedef BOOL(__cdecl *NetJetControllerGetState_)(PDWORD, PDWORD, PDWORD);
-extern "C" BOOL __cdecl callNetJetControllerGetState(PDWORD wButtons, PDWORD bThumbRX, PDWORD bThumbRY)
-{
-	BOOL result = false;
-	NetJetControllerGetState_ originalNetJetControllerGetState;
+typedef BOOL(__cdecl *_NetJetControllerGetState)(PDWORD, PDWORD, PDWORD);
+extern "C" BOOL __cdecl callNetJetControllerGetState(PDWORD wButtons, PDWORD bThumbRX, PDWORD bThumbRY) {
+	BOOL originalResult = false;
+	_NetJetControllerGetState originalNetJetControllerGetState;
+	originalNetJetControllerGetState = (_NetJetControllerGetState)GetProcAddress(originalNetJetController, "NetJetControllerGetState");
 
-	originalNetJetControllerGetState = (NetJetControllerGetState_)GetProcAddress(originalNetJetController, "NetJetControllerGetState");
-	if (!originalNetJetControllerGetState) {
-	}
-	else {
-		result = !originalNetJetControllerGetState(wButtons, bThumbRX, bThumbRY);
+	if (originalNetJetControllerGetState) {
+		originalResult = originalNetJetControllerGetState(wButtons, bThumbRX, bThumbRY);
 	}
 
-	netJetEmulator.callNetJetControllerGetState(wButtons, bThumbRX, bThumbRY, result);
-
-	return false;
+	netJetEmulator.callNetJetControllerGetState(wButtons, bThumbRX, bThumbRY, originalResult);
+	return FALSE;
 }
 
-typedef BOOL(__cdecl *NetJetControllerSetWindow_)(HWND);
-extern "C" BOOL __cdecl callNetJetControllerSetWindow(HWND hWnd)
-{
-	NetJetControllerSetWindow_ originalNetJetControllerSetWindow;
+typedef BOOL(__cdecl *_NetJetControllerSetWindow)(HWND);
+extern "C" BOOL __cdecl callNetJetControllerSetWindow(HWND hWnd) {
+	_NetJetControllerSetWindow originalNetJetControllerSetWindow;
+	originalNetJetControllerSetWindow = (_NetJetControllerSetWindow)GetProcAddress(originalNetJetController, "NetJetControllerSetWindow");
 
-	originalNetJetControllerSetWindow = (NetJetControllerSetWindow_)GetProcAddress(originalNetJetController, "NetJetControllerSetWindow");
-	if (!originalNetJetControllerSetWindow) {
-	} else {
+	if (originalNetJetControllerSetWindow) {
 		originalNetJetControllerSetWindow(hWnd);
 	}
-
-	return false;
+	return FALSE;
 }
 
-typedef BOOL(__cdecl *NetJetControllerGetControllerKey_)(int);
-extern "C" BOOL __cdecl callNetJetControllerGetControllerKey(int wButtons)
-{
-	BOOL result = false;
-	NetJetControllerGetControllerKey_ originalNetJetControllerGetControllerKey;
-
-	originalNetJetControllerGetControllerKey = (NetJetControllerGetControllerKey_)GetProcAddress(originalNetJetController, "NetJetControllerGetControllerKey");
-	if (!originalNetJetControllerGetControllerKey) {
-	} else {
-		result = !originalNetJetControllerGetControllerKey(wButtons);
+typedef BOOL(__cdecl *_NetJetControllerGetControllerKey)(DWORD);
+extern "C" BOOL __cdecl callNetJetControllerGetControllerKey(DWORD wButtons) {
+	_NetJetControllerGetControllerKey originalNetJetControllerGetControllerKey;
+	originalNetJetControllerGetControllerKey = (_NetJetControllerGetControllerKey)GetProcAddress(originalNetJetController, "NetJetControllerGetControllerKey");
+	
+	if (originalNetJetControllerGetControllerKey) {
+		if (originalNetJetControllerGetControllerKey(wButtons)) {
+			netJetEmulator.callNetJetControllerGetKey((PVOID)wButtons);
+		}
 	}
-
-	netJetEmulator.callNetJetControllerGetKey((char* )wButtons, result);
-
-	return false;
+	return FALSE;
 }
 
-typedef BOOL(__cdecl *NetJetControlleretCartrdigeKey_)(int);
-extern "C" BOOL __cdecl callNetJetControlleretCartrdigeKey(int wButtons)
-{
-	BOOL result = false;
-	NetJetControlleretCartrdigeKey_ originalNetJetControlleretCartrdigeKey;
-
-	originalNetJetControlleretCartrdigeKey = (NetJetControlleretCartrdigeKey_)GetProcAddress(originalNetJetController, "NetJetControlleretCartrdigeKey");
-	if (!originalNetJetControlleretCartrdigeKey) {
-	} else {
-		result = !originalNetJetControlleretCartrdigeKey(wButtons);
+typedef BOOL(__cdecl *_NetJetControlleretCartrdigeKey)(DWORD);
+extern "C" BOOL __cdecl callNetJetControlleretCartrdigeKey(DWORD wButtons) {
+	_NetJetControlleretCartrdigeKey originalNetJetControlleretCartrdigeKey;
+	originalNetJetControlleretCartrdigeKey = (_NetJetControlleretCartrdigeKey)GetProcAddress(originalNetJetController, "NetJetControlleretCartrdigeKey");
+	
+	if (originalNetJetControlleretCartrdigeKey) {
+		if (originalNetJetControlleretCartrdigeKey(wButtons)) {
+			netJetEmulator.callNetJetControllerGetKey((PVOID)wButtons);
+		}
 	}
-
-	netJetEmulator.callNetJetControllerGetKey((char* )wButtons, result);
-
-	return false;
+	return FALSE;
 }
 
-typedef DWORD(*NetJetControllerRun_)();
-extern "C" DWORD callNetJetControllerRun()
-{
-	NetJetControllerRun_ originalNetJetControllerRun;
+typedef DWORD(*_NetJetControllerRun)();
+extern "C" DWORD callNetJetControllerRun() {
+	_NetJetControllerRun originalNetJetControllerRun;
+	originalNetJetControllerRun = (_NetJetControllerRun)GetProcAddress(originalNetJetController, "NetJetControllerRun");
 
-	originalNetJetControllerRun = (NetJetControllerRun_)GetProcAddress(originalNetJetController, "NetJetControllerRun");
-	if (!originalNetJetControllerRun) {
-	} else {
+	if (originalNetJetControllerRun) {
 		originalNetJetControllerRun();
 	}
-
 	return 0;
 }
