@@ -1,11 +1,9 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Platforms\Win32\PlatformToolsets\v141_xp\Toolset.targets(39,5): warning MSB8051: Support for targeting Windows XP is deprecated and will not be present in future releases of Visual Studio. Please see https://go.microsoft.com/fwlink/?linkid=2023588 for more information.
   NetJetController.cpp
-c:\users\anthony\documents\visual studio 2015\projects\netjettools\netjetcontroller\netjetcontroller.cpp(156): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
-c:\users\anthony\documents\visual studio 2015\projects\netjettools\netjetcontroller\netjetcontroller.cpp(157): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
-     Creating library C:\Users\Anthony\Documents\Visual Studio 2015\Projects\NetJetTools\Release\NetJetController.lib and object C:\Users\Anthony\Documents\Visual Studio 2015\Projects\NetJetTools\Release\NetJetController.exp
+c:\users\anthony\documents\visual studio 2017\projects\netjettools\netjetcontroller\netjetcontroller.cpp(156): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
+c:\users\anthony\documents\visual studio 2017\projects\netjettools\netjetcontroller\netjetcontroller.cpp(157): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
+     Creating library C:\Users\Anthony\Documents\Visual Studio 2017\Projects\NetJetTools\Release\NetJetController.lib and object C:\Users\Anthony\Documents\Visual Studio 2017\Projects\NetJetTools\Release\NetJetController.exp
   Generating code
-  22 of 29 functions (75.9%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+  All 28 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
-  NetJetController.vcxproj -> C:\Users\Anthony\Documents\Visual Studio 2015\Projects\NetJetTools\Release\NetJetController.dll
+  NetJetController.vcxproj -> C:\Users\Anthony\Documents\Visual Studio 2017\Projects\NetJetTools\Release\NetJetController.dll

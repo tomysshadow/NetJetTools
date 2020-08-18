@@ -1,12 +1,12 @@
-3D Groove NetJet Emulator 1.1.1
+NetJet Simulator 1.1.2
 By Anthony Kleine
 --------
 Long Description
-	An emulator for the Hasbro NetJet Controller device meant specifically for use with Transformers Battle Universe. Allows the use of your keyboard/360 Controller in place of the NetJet Controller. If a legitimate NetJet Controller is connected, it will still use that controller. If a 360 Controller is connected, it will still use the NetJet Controller, but prefer input from the 360 Controller. Keyboard input will be preferred over either controller. Button presses are not cumulative (pressing left on both the NetJet Controller and keyboard will not make you run twice as fast in-game.) A game key is still required, this is not a keygen. While one could theoretically remove the Armadillo 4.66 DRM used by NetJet games and they would work without any legitimate NetJet Controller, that is outside the scope of this project.
+	A simulator for the Hasbro NetJet Controller device meant specifically for use with Transformers Battle Universe. Allows the use of your keyboard/360 Controller in place of the NetJet Controller. If a legitimate NetJet Controller is connected, it will still use that controller. If a 360 Controller is connected, it will still use the NetJet Controller, but prefer input from the 360 Controller. Keyboard input will be preferred over either controller. Button presses are not cumulative (pressing left on both the NetJet Controller and keyboard will not make you run twice as fast in-game.) A game key is still required, this is not a keygen. While one could theoretically remove the Armadillo 4.66 DRM used by NetJet games and they would work without any legitimate NetJet Controller, that is outside the scope of this project.
 
 	This is a proxy DLL to reside in the game directory. It relies on the original NetJetController.DLL being present but renamed to NetJetController_.DLL. SetWindowsHookEx is used to prevent the game from receiving keystrokes. This is to prevent key/button presses being received twice.
 
-	In the future this code may be recycled into a fully fledged application to pair with a NetJet Emulator driver that would give a universal emulation. The driver could reasonably be based off of FileDisk, as it would be required to mount an ISO image or similar. This would require returning a buffer in the NetJet Controller's device language from DeviceIoControl. The NetJet Controller exposes a CDROM interface. It mounts an image containing an AutoRun.exe and autorun.inf file which downloads an installer for the keyhole application for NetJet games via the internet. The Hasbro server for this is no longer available, and an error is given if attempting to connect to it. It does not expose any HID (Human Interface Device) interface. Instead, DeviceIoControl is used to Get Controller State as ReadFile/WriteFile would imply reading from/writing to the disk. Games identify the NetJet Controller by its Vendor ID (VID) and Product ID (PID.)
+	In the future this code may be recycled into a fully fledged application to pair with a NetJet Simulator driver that would give a universal simulation. This would require returning a buffer in the NetJet Controller's device language from DeviceIoControl. The NetJet Controller exposes a CDROM interface. It mounts an image containing an AutoRun.exe and autorun.inf file which downloads an installer for the keyhole application for NetJet games via the internet. The Hasbro server for this is no longer available, and an error is given if attempting to connect to it. It does not expose any HID (Human Interface Device) interface. Instead, DeviceIoControl is used to Get Controller State as ReadFile/WriteFile would imply reading from/writing to the disk. Games identify the NetJet Controller by its Vendor ID (VID) and Product ID (PID.)
 --------
 Maps
 	Controller Inserted: Always
@@ -57,14 +57,14 @@ Device Details
 	4D014h - Get Controller State
 
 	OutBuffer:
-		DWORD wButtons
+		DWORD buttons
 		Cartridge_Inserted Controller_Inserted "Right Shoulder" "Left Shoulder" "Button One" "Button Three" "Button Two" "Button Four"
 		Mouse_Map??        Unknown             Unknown          "DPad Right"    "DPad Left"  "DPad Down"    "DPad Up"    "Start"
 
-		BYTE bThumbRX
+		BYTE thumbRX
 		Right Analog Stick Left to Right
 
-		BYTE bThumbRY
+		BYTE thumbRY
 		Right Analog Stick Up to Down
 
 		BYTE controllerKey[20]
