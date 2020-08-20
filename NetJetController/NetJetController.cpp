@@ -1,8 +1,8 @@
 #include "NetJetController.h"
 #include <windows.h>
 
-HINSTANCE originalNetJetController;
-HINSTANCE originalXbox360Controller;
+HMODULE originalNetJetController;
+HMODULE originalXbox360Controller;
 NetJetSimulator netJetSimulator;
 
 

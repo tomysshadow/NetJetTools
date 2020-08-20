@@ -2,5 +2,4 @@
   NetJetController.cpp
 c:\users\anthony\documents\visual studio 2017\projects\netjettools\netjetcontroller\netjetcontroller.cpp(156): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
 c:\users\anthony\documents\visual studio 2017\projects\netjettools\netjetcontroller\netjetcontroller.cpp(157): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
-     Creating library C:\Users\Anthony\Documents\Visual Studio 2017\Projects\NetJetTools\Debug\NetJetController.lib and object C:\Users\Anthony\Documents\Visual Studio 2017\Projects\NetJetTools\Debug\NetJetController.exp
   NetJetController.vcxproj -> C:\Users\Anthony\Documents\Visual Studio 2017\Projects\NetJetTools\Debug\NetJetController.dll
