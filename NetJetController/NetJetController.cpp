@@ -239,22 +239,8 @@ void NetJetSimulator::callNetJetControllerGetKey(PVOID key) {
 
 
 BOOL WINAPI DllMain(HINSTANCE hInst, DWORD fdwReason, LPVOID lpvReserved) {
-	switch (fdwReason) {
-		case DLL_PROCESS_ATTACH:
+	if (fdwReason == DLL_PROCESS_ATTACH) {
 		DisableThreadLibraryCalls(hInst);
-		originalNetJetController = LoadLibraryA("NetJetController_orig.DLL");
-
-		if (!originalNetJetController) {
-			return FALSE;
-		}
-
-		netJetSimulator.keyboard.backgroundThreadHook = SetWindowsHookEx(WH_KEYBOARD_LL, netJetSimulator.keyboard.backgroundThread, NULL, 0);
-		ShowCursor(FALSE);
-		break;
-		case DLL_PROCESS_DETACH:
-		UnhookWindowsHookEx(netJetSimulator.keyboard.backgroundThreadHook);
-		ShowCursor(TRUE);
-		break;
 	}
 	return TRUE;
 }
@@ -264,6 +250,10 @@ BOOL WINAPI DllMain(HINSTANCE hInst, DWORD fdwReason, LPVOID lpvReserved) {
 // returning false or zero means no error occured
 typedef DWORD(*_NetJetControllerEnableKeyMapping)();
 extern "C" DWORD callNetJetControllerEnableKeyMapping() {
+	if (!originalNetJetController) {
+		return 1;
+	}
+
 	_NetJetControllerEnableKeyMapping originalNetJetControllerEnableKeyMapping;
 	originalNetJetControllerEnableKeyMapping = (_NetJetControllerEnableKeyMapping)GetProcAddress(originalNetJetController, "NetJetControllerEnableKeyMapping");
 	
@@ -278,6 +268,10 @@ extern "C" DWORD callNetJetControllerEnableKeyMapping() {
 
 typedef DWORD(*_NetJetControllerDisableKeyMapping)();
 extern "C" DWORD callNetJetControllerDisableKeyMapping() {
+	if (!originalNetJetController) {
+		return 1;
+	}
+
 	_NetJetControllerDisableKeyMapping originalNetJetControllerDisableKeyMapping;
 	originalNetJetControllerDisableKeyMapping = (_NetJetControllerDisableKeyMapping)GetProcAddress(originalNetJetController, "NetJetControllerDisableKeyMapping");
 	
@@ -292,6 +286,10 @@ extern "C" DWORD callNetJetControllerDisableKeyMapping() {
 
 typedef DWORD(*_NetJetControllerEnableMouseMapping)();
 extern "C" DWORD callNetJetControllerEnableMouseMapping() {
+	if (!originalNetJetController) {
+		return 1;
+	}
+
 	_NetJetControllerEnableMouseMapping originalNetJetControllerEnableMouseMapping;
 	originalNetJetControllerEnableMouseMapping = (_NetJetControllerEnableMouseMapping)GetProcAddress(originalNetJetController, "NetJetControllerEnableMouseMapping");
 	
@@ -306,6 +304,10 @@ extern "C" DWORD callNetJetControllerEnableMouseMapping() {
 
 typedef DWORD(*_NetJetControllerDisableMouseMapping)();
 extern "C" DWORD callNetJetControllerDisableMouseMapping() {
+	if (!originalNetJetController) {
+		return 1;
+	}
+
 	_NetJetControllerDisableMouseMapping originalNetJetControllerDisableMouseMapping;
 	originalNetJetControllerDisableMouseMapping = (_NetJetControllerDisableMouseMapping)GetProcAddress(originalNetJetController, "NetJetControllerDisableMouseMapping");
 	
@@ -320,19 +322,31 @@ extern "C" DWORD callNetJetControllerDisableMouseMapping() {
 
 typedef DWORD(*_NetJetControllerInitialize)();
 extern "C" DWORD callNetJetControllerInitialize() {
+	originalNetJetController = LoadLibraryA("NetJetController_orig.DLL");
+
+	if (!originalNetJetController) {
+		return 1;
+	}
+
 	_NetJetControllerInitialize originalNetJetControllerInitialize;
 	originalNetJetControllerInitialize = (_NetJetControllerInitialize)GetProcAddress(originalNetJetController, "NetJetControllerInitialize");
-	
+
 	if (originalNetJetControllerInitialize) {
 		originalNetJetControllerInitialize();
 	}
 
+	netJetSimulator.keyboard.backgroundThreadHook = SetWindowsHookEx(WH_KEYBOARD_LL, netJetSimulator.keyboard.backgroundThread, NULL, 0);
+	ShowCursor(FALSE);
 	originalXbox360Controller = LoadLibrary(L"XINPUT9_1_0.DLL");
 	return 0;
 }
 
 typedef BOOL(*_NetJetControllerSuspend)();
 extern "C" BOOL callNetJetControllerSuspend() {
+	if (!originalNetJetController) {
+		return TRUE;
+	}
+
 	_NetJetControllerSuspend originalNetJetControllerSuspend;
 	originalNetJetControllerSuspend = (_NetJetControllerSuspend)GetProcAddress(originalNetJetController, "NetJetControllerSuspend");
 
@@ -346,6 +360,10 @@ extern "C" BOOL callNetJetControllerSuspend() {
 
 typedef BOOL(*_NetJetControllerResume)();
 extern "C" BOOL callNetJetControllerResume() {
+	if (!originalNetJetController) {
+		return TRUE;
+	}
+
 	_NetJetControllerResume originalNetJetControllerResume;
 	originalNetJetControllerResume = (_NetJetControllerResume)GetProcAddress(originalNetJetController, "NetJetControllerResume");
 
@@ -359,17 +377,28 @@ extern "C" BOOL callNetJetControllerResume() {
 
 typedef DWORD(*_NetJetControllerShutdown)();
 extern "C" DWORD callNetJetControllerShutdown() {
+	if (!originalNetJetController) {
+		return 1;
+	}
+
 	_NetJetControllerShutdown originalNetJetControllerShutdown;
 	originalNetJetControllerShutdown = (_NetJetControllerShutdown)GetProcAddress(originalNetJetController, "NetJetControllerShutdown");
 
 	if (originalNetJetControllerShutdown) {
 		originalNetJetControllerShutdown();
 	}
+
+	UnhookWindowsHookEx(netJetSimulator.keyboard.backgroundThreadHook);
+	ShowCursor(TRUE);
 	return 0;
 }
 
 typedef DWORD(*_NetJetControllerSetKeyMapping)(WORD);
 extern "C" DWORD callNetJetControllerSetKeyMapping(WORD buttons) {
+	if (!originalNetJetController) {
+		return 1;
+	}
+
 	_NetJetControllerSetKeyMapping originalNetJetControllerSetKeyMapping;
 	originalNetJetControllerSetKeyMapping = (_NetJetControllerSetKeyMapping)GetProcAddress(originalNetJetController, "NetJetControllerSetKeyMapping");
 
@@ -381,6 +410,10 @@ extern "C" DWORD callNetJetControllerSetKeyMapping(WORD buttons) {
 
 typedef BOOL(__cdecl *_NetJetControllerSetOption)(WORD, WORD);
 extern "C" BOOL __cdecl callNetJetControllerSetOption(WORD buttons, WORD priority) {
+	if (!originalNetJetController) {
+		return TRUE;
+	}
+
 	_NetJetControllerSetOption originalNetJetControllerSetOption;
 	originalNetJetControllerSetOption = (_NetJetControllerSetOption)GetProcAddress(originalNetJetController, "NetJetControllerSetOption");
 
@@ -392,6 +425,10 @@ extern "C" BOOL __cdecl callNetJetControllerSetOption(WORD buttons, WORD priorit
 
 typedef BOOL(__cdecl *_NetJetControllerGetState)(PDWORD, PDWORD, PDWORD);
 extern "C" BOOL __cdecl callNetJetControllerGetState(PDWORD buttons, PDWORD thumbRX, PDWORD thumbRY) {
+	if (!originalNetJetController) {
+		return TRUE;
+	}
+
 	_NetJetControllerGetState originalNetJetControllerGetState;
 	originalNetJetControllerGetState = (_NetJetControllerGetState)GetProcAddress(originalNetJetController, "NetJetControllerGetState");
 	BOOL originalResult = false;
@@ -406,6 +443,10 @@ extern "C" BOOL __cdecl callNetJetControllerGetState(PDWORD buttons, PDWORD thum
 
 typedef BOOL(__cdecl *_NetJetControllerSetWindow)(HWND);
 extern "C" BOOL __cdecl callNetJetControllerSetWindow(HWND hWnd) {
+	if (!originalNetJetController) {
+		return TRUE;
+	}
+
 	_NetJetControllerSetWindow originalNetJetControllerSetWindow;
 	originalNetJetControllerSetWindow = (_NetJetControllerSetWindow)GetProcAddress(originalNetJetController, "NetJetControllerSetWindow");
 
@@ -417,6 +458,10 @@ extern "C" BOOL __cdecl callNetJetControllerSetWindow(HWND hWnd) {
 
 typedef BOOL(__cdecl *_NetJetControllerGetControllerKey)(DWORD);
 extern "C" BOOL __cdecl callNetJetControllerGetControllerKey(DWORD buttons) {
+	if (!originalNetJetController) {
+		return TRUE;
+	}
+
 	_NetJetControllerGetControllerKey originalNetJetControllerGetControllerKey;
 	originalNetJetControllerGetControllerKey = (_NetJetControllerGetControllerKey)GetProcAddress(originalNetJetController, "NetJetControllerGetControllerKey");
 	
@@ -430,6 +475,10 @@ extern "C" BOOL __cdecl callNetJetControllerGetControllerKey(DWORD buttons) {
 
 typedef BOOL(__cdecl *_NetJetControlleretCartrdigeKey)(DWORD);
 extern "C" BOOL __cdecl callNetJetControlleretCartrdigeKey(DWORD buttons) {
+	if (!originalNetJetController) {
+		return TRUE;
+	}
+
 	_NetJetControlleretCartrdigeKey originalNetJetControlleretCartrdigeKey;
 	originalNetJetControlleretCartrdigeKey = (_NetJetControlleretCartrdigeKey)GetProcAddress(originalNetJetController, "NetJetControlleretCartrdigeKey");
 	
@@ -443,6 +492,10 @@ extern "C" BOOL __cdecl callNetJetControlleretCartrdigeKey(DWORD buttons) {
 
 typedef DWORD(*_NetJetControllerRun)();
 extern "C" DWORD callNetJetControllerRun() {
+	if (!originalNetJetController) {
+		return 1;
+	}
+
 	_NetJetControllerRun originalNetJetControllerRun;
 	originalNetJetControllerRun = (_NetJetControllerRun)GetProcAddress(originalNetJetController, "NetJetControllerRun");
 
