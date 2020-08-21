@@ -4,8 +4,8 @@ c:\users\anthony\documents\visual studio 2017\projects\netjettools\netjetcontrol
 c:\users\anthony\documents\visual studio 2017\projects\netjettools\netjetcontroller\netjetcontroller.cpp(157): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
      Creating library C:\Users\Anthony\Documents\Visual Studio 2017\Projects\NetJetTools\Release\NetJetController.lib and object C:\Users\Anthony\Documents\Visual Studio 2017\Projects\NetJetTools\Release\NetJetController.exp
   Generating code
-  16 of 28 functions (57.1%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
+  27 of 28 functions (96.4%) were compiled, the rest were copied from previous compilation.
+    12 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   NetJetController.vcxproj -> C:\Users\Anthony\Documents\Visual Studio 2017\Projects\NetJetTools\Release\NetJetController.dll
