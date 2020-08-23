@@ -25,7 +25,7 @@ typedef struct _XINPUT_STATE {
 
 typedef DWORD(WINAPI *_XInputGetState)(_In_ DWORD dwUserIndex, _Out_ XINPUT_STATE *pState);
 
-class KonamiLiveSimulator {
+class NetJetSimulator {
 	public:
 	class Keyboard {
 		private:
