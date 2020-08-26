@@ -1,0 +1,7 @@
+LIBRARY KonamiLiveController.DLL
+EXPORTS
+KonamiLiveControllerInitialize=callKonamiLiveControllerInitialize @7
+KonamiLiveControllerSuspend=callKonamiLiveControllerSuspend @14
+KonamiLiveControllerResume=callKonamiLiveControllerResume @8
+KonamiLiveControllerGetState=callKonamiLiveControllerGetState @6
+KonamiLiveControllerSetWindow=callKonamiLiveControllerSetWindow @12
