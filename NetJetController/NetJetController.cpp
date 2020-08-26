@@ -443,6 +443,7 @@ extern "C" BOOL __cdecl callNetJetControllerGetState(PDWORD buttons, PDWORD thum
 
 typedef BOOL(__cdecl *_NetJetControllerSetWindow)(HWND);
 extern "C" BOOL __cdecl callNetJetControllerSetWindow(HWND hWnd) {
+	/*
 	if (!originalNetJetController) {
 		return TRUE;
 	}
@@ -453,6 +454,7 @@ extern "C" BOOL __cdecl callNetJetControllerSetWindow(HWND hWnd) {
 	if (originalNetJetControllerSetWindow) {
 		originalNetJetControllerSetWindow(hWnd);
 	}
+	*/
 	return FALSE;
 }
 
