@@ -18,11 +18,12 @@
     <ClCompile Include="NetJetController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="NetJetController.def">
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
-    </None>
+    </ClCompile>
+    <ClCompile Include="shared.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="README.txt" />
@@ -31,5 +32,13 @@
     <ClInclude Include="NetJetController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="shared.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="main.def">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
