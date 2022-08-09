@@ -3,7 +3,7 @@
 #include <windows.h>
 
 typedef DWORD CHUNK_ID;
-typedef __int64 LONG_CHUNK_ID;
+typedef DWORD64 LONG_CHUNK_ID;
 
 typedef DWORD CONTROL;
 typedef CONTROL MAPPING;
